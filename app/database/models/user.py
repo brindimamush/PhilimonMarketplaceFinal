@@ -26,9 +26,13 @@ class User(Base):
     language: Mapped[str] = mapped_column(String(10), default="en", nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
 
-    # Relationships
+    # Relationships — lazy="selectin" enables eager loading in async mode
     buyer_profile: Mapped["BuyerProfile | None"] = relationship(
-        "BuyerProfile", back_populates="user", uselist=False, cascade="all, delete-orphan"
+        "BuyerProfile",
+        back_populates="user",
+        uselist=False,
+        cascade="all, delete-orphan",
+        lazy="selectin",
     )
     seller_profile: Mapped["SellerProfile | None"] = relationship(
         "SellerProfile",

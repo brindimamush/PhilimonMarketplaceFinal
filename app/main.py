@@ -1,13 +1,14 @@
 import asyncio
 import logging
 
-from telegram.ext import ApplicationBuilder, CommandHandler
+from telegram.ext import ApplicationBuilder
 
 from app.config.logging import setup_logging
 from app.config.settings import settings
 from app.database.session import check_db_health
-from app.telegram.handlers.common import start_handler
+
 from app.utils.redis import check_redis_health, redis_client
+from app.telegram.handlers.registration import get_registration_handler # <--- Import new handler
 
 setup_logging(settings.LOG_LEVEL)
 logger = logging.getLogger(__name__)
@@ -28,8 +29,8 @@ async def main() -> None:
 
     # Initialize Telegram Application
     application = ApplicationBuilder().token(settings.BOT_TOKEN).build()
-    application.add_handler(CommandHandler("start", start_handler))
-
+    #application.add_handler(CommandHandler("start", start_handler))
+    application.add_handler(get_registration_handler())
     await application.initialize()
     await application.start()
     if application.updater:
