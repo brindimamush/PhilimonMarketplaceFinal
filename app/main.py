@@ -1,3 +1,4 @@
+# File: app/main.py
 import asyncio
 import logging
 
@@ -6,37 +7,36 @@ from telegram.ext import ApplicationBuilder
 from app.config.logging import setup_logging
 from app.config.settings import settings
 from app.database.session import check_db_health
-
+from app.telegram.handlers.buyer_menu import get_buyer_menu_handlers
+from app.telegram.handlers.registration import get_registration_handler
 from app.utils.redis import check_redis_health, redis_client
-from app.telegram.handlers.registration import get_registration_handler # <--- Import new handler
 
 setup_logging(settings.LOG_LEVEL)
 logger = logging.getLogger(__name__)
 
 
 async def main() -> None:
-    """Application bootstrapper fulfilling Phase 1 system checks."""
+    """Application bootstrapper."""
     logger.info("Starting Modular Monolith Marketplace Core...")
 
-    # Validate Infrastructure Services
     if not await check_db_health():
         raise RuntimeError("Fatal: PostgreSQL connection failed.")
-    logger.info("PostgreSQL Service: Connected OK.")
-
     if not await check_redis_health():
         raise RuntimeError("Fatal: Redis connection failed.")
-    logger.info("Redis Service: Connected OK.")
 
-    # Initialize Telegram Application
     application = ApplicationBuilder().token(settings.BOT_TOKEN).build()
-    #application.add_handler(CommandHandler("start", start_handler))
+
+    # Register registration flow and buyer menu handlers
     application.add_handler(get_registration_handler())
+    for handler in get_buyer_menu_handlers():
+        application.add_handler(handler)
+
     await application.initialize()
     await application.start()
     if application.updater:
         await application.updater.start_polling()
 
-    logger.info("Telegram Bot Polling Operational. Marketplace Ready.")
+    logger.info("Telegram Bot Polling Operational. Marketplace Phase 4 Ready.")
 
     stop_event = asyncio.Event()
     try:
