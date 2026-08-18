@@ -198,7 +198,7 @@ def get_registration_handler() -> ConversationHandler:
     return ConversationHandler(
         entry_points=[CommandHandler("start", start_registration)],
         states={
-            CHOOSE_ROLE: [CallbackQueryHandler(choose_role, pattern="^role_")],
+            CHOOSE_ROLE: [CallbackQueryHandler(choose_role, pattern="^role_buyer$")],
             BUYER_RULES: [CallbackQueryHandler(handle_rules, pattern="^rules_")],
             BUYER_CONTACT: [MessageHandler(filters.CONTACT, receive_contact)],
             BUYER_NAME: [MessageHandler(filters.TEXT & ~filters.COMMAND, receive_name)],

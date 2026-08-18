@@ -9,6 +9,7 @@ from app.config.settings import settings
 from app.database.session import check_db_health
 from app.telegram.handlers.buyer_menu import get_buyer_menu_handlers
 from app.telegram.handlers.registration import get_registration_handler
+from app.telegram.handlers.seller_registration import get_seller_registration_handler
 from app.utils.redis import check_redis_health, redis_client
 
 setup_logging(settings.LOG_LEVEL)
@@ -28,6 +29,7 @@ async def main() -> None:
 
     # Register registration flow and buyer menu handlers
     application.add_handler(get_registration_handler())
+    application.add_handler(get_seller_registration_handler())
     for handler in get_buyer_menu_handlers():
         application.add_handler(handler)
 

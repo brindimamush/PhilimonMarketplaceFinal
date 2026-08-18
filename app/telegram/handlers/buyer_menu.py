@@ -93,16 +93,6 @@ async def handle_language_menu(update: Update, context: ContextTypes.DEFAULT_TYP
     )
 
 
-async def handle_switch_seller(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Handler for 👤 Switch to Seller button."""
-    if not update.effective_user or not update.message:
-        return
-    telegram_id_ctx.set(update.effective_user.id)
-    user = await get_current_user(update.effective_user.id)
-    lang = user.language if user else "en"
-    await update.message.reply_text(t("SWITCH_SELLER_RESPONSE", lang))
-
-
 async def handle_support(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Handler for 🆘 Support button."""
     if not update.effective_user or not update.message:
@@ -157,10 +147,7 @@ def get_buyer_menu_handlers() -> list:
             filters.TEXT & filters.Text(get_all_button_texts("BTN_LANGUAGE")),
             handle_language_menu,
         ),
-        MessageHandler(
-            filters.TEXT & filters.Text(get_all_button_texts("BTN_SWITCH_SELLER")),
-            handle_switch_seller,
-        ),
+       
         MessageHandler(
             filters.TEXT & filters.Text(get_all_button_texts("BTN_SUPPORT")),
             handle_support,
